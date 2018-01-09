@@ -31,19 +31,9 @@ setInterval(() => {
 router.get('/', (req, res, next) => {
   const sessionId = req.cookies.sessionId;
   if (sessionId && sessionTokens[sessionId]) {
-    res.redirect('/home');
-  } else {
-    res.render('index', { bundle: 'index.js' });
-  }
-});
-
-/* GET home page. */
-router.get('/home', (req, res, next) => {
-  const sessionId = req.cookies.sessionId;
-  if (sessionId && sessionTokens[sessionId]) {
     res.render('index', { bundle: 'home.js' });
   } else {
-    res.redirect('/');
+    res.render('index', { bundle: 'index.js' });
   }
 });
 
@@ -122,15 +112,15 @@ router.get('/api/users/@me/guilds', (req, res, next) => {
   if (sessionId && sessionTokens[sessionId]) {
     res.status(202);
 
-    getBotGuilds()
-    .then((botGuilds) => {
+//    getBotGuilds()
+//    .then((botGuilds) => {
       getGuilds(sessionTokens[sessionId])
       .then((userGuilds) => {
         let guilds = [];
         userGuilds.forEach((guild) => {
-          if (botGuilds.includes(guild.id)) {
+//          if (botGuilds.includes(guild.id)) {
             guilds.push(guild);
-          }
+//          }
         });
 
         res.status(200).json(guilds);
@@ -138,10 +128,10 @@ router.get('/api/users/@me/guilds', (req, res, next) => {
       .catch((err) => {
         res.status(403).json(err);
       });
-    })
-    .catch((err) => {
-      res.status(403).json(err);
-    });
+//    })
+//    .catch((err) => {
+//      res.status(403).json(err);
+//    });
   } else {
     res.status(403).end();
   }
@@ -253,12 +243,12 @@ router.get('/api/auth', (req, res, next) => {
 
     res.cookie('sessionId', sessionId, {
       httpOnly: true,
-      path: '/waifu',
+      path: '/',
       expires: new Date(Date.now()+info.expires_in),
       maxAge: info.expires_in
     });
 
-    res.redirect(303, '/waifu');
+    res.redirect(303, '/');
   })
   .catch((err) => {
     console.log(err);
@@ -277,10 +267,10 @@ function authenticate(code) {
     let info = {};
 
     const test = https.request({
-      path: '/api/oauth2/token?client_id=259932651417370624&client_secret=-V_Rkf4Gg44QraRjjMdbss465gL42vOH&grant_type=authorization_code&redirect_uri=http://localhost/waifu/api/auth&code='+code,
+      path: '/api/oauth2/token?client_id=259932651417370624&client_secret=-V_Rkf4Gg44QraRjjMdbss465gL42vOH&grant_type=authorization_code&redirect_uri=http://localhost/api/auth&code='+code,
       hostname: 'discordapp.com', method: 'POST', port: '443', headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'User-Agent': 'DiscordBot (https://github.com/Bob620/bobco, 2.1.0)'
+        'User-Agent': 'DiscordBot (https://github.com/Bob620/waifusite, 2.1.0)'
       }
     }, (res) => {
       res.setEncoding('utf8');
@@ -317,7 +307,7 @@ function getBotGuilds() {
 
     const test = http.request({
       path: '/api/guilds',
-      hostname: 'bobco.moe', method: 'GET', port: '3063', headers: {
+      hostname: 'bot.waifubot.moe', method: 'GET', port: '80', headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       }
     }, (res) => {
@@ -355,7 +345,7 @@ function getGuilds(token) {
       hostname: 'discordapp.com', method: 'GET', port: '443', headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/x-www-form-urlencoded',
-        'User-Agent': 'DiscordBot (https://github.com/Bob620/bobco, 1.0.0)'
+        'User-Agent': 'DiscordBot (https://github.com/Bob620/waifusite, 2.1.0)'
       }
     }, (res) => {
       res.setEncoding('utf8');
@@ -392,7 +382,7 @@ function getUser(token) {
       hostname: 'discordapp.com', method: 'GET', port: '443', headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/x-www-form-urlencoded',
-        'User-Agent': 'DiscordBot (https://github.com/Bob620/bobco, 1.0.0)'
+        'User-Agent': 'DiscordBot (https://github.com/Bob620/waifusite, 2.1.0)'
       }
     }, (res) => {
       res.setEncoding('utf8');
@@ -423,7 +413,7 @@ function revokeToken(token) {
       path: `/api/oauth2/token/revoke?token=${token}`,
       hostname: 'discordapp.com', method: 'GET', port: '443', headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'User-Agent': 'DiscordBot (https://github.com/Bob620/bobco, 1.0.0)'
+        'User-Agent': 'DiscordBot (https://github.com/Bob620/waifusite, 2.1.0)'
       }
     }, (res) => {
       res.setEncoding('utf8');

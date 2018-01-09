@@ -12,7 +12,7 @@ class BaseElement extends Component {
   }
 
   componentDidMount() {
-    axios.get('/waifu/api/users/@me')
+    axios.get('/api/users/@me')
     .then((res) => {
       this.setState({user: res.data});
     })
@@ -20,7 +20,7 @@ class BaseElement extends Component {
       console.log(err);
     });
 
-    axios.get('/waifu/api/users/@me/guilds')
+    axios.get('/api/users/@me/guilds')
     .then((res) => {
       this.setState({guilds: res.data});
     })

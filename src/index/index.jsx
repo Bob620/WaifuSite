@@ -33,7 +33,7 @@ class GeneralHome extends Component {
             </p>
             <RedirectButton text="Add Waifu to a Server" link="https://discordapp.com/oauth2/authorize?&client_id=259932651417370624&scope=bot&permissions=66321471" />
             <br/>
-            <RedirectButton text="Login to Console" link="https://discordapp.com/oauth2/authorize?response_type=code&redirect_uri=http%3A%2F%2Flocalhost/waifu/api/auth&scope=identify guilds&client_id=259932651417370624" />
+            <RedirectButton text="Login to Console" link="https://discordapp.com/oauth2/authorize?response_type=code&redirect_uri=http%3A%2F%2Flocalhost/api/auth&scope=identify guilds&client_id=259932651417370624" />
           </div>
         </section>
         <section id="right-part">
