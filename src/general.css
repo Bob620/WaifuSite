@@ -1,0 +1,147 @@
+@import url('https://fonts.googleapis.com/css?family=Oxygen');
+
+body {
+  margin: 0px;
+  background-image: url(/assets/images/background.png);
+  background-repeat: repeat;
+  background-size: 30vw;
+}
+
+.App-intro {
+  padding: 20px;
+  font-size: large;
+  text-align: center;
+}
+
+.App {
+  font-family: 'Oxygen', sans-serif;
+  color: white;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(0,0,0,0.2);
+}
+
+.App-fail {
+  color: #ff4646;
+}
+
+/* App-loading */
+
+.App-loading {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  width: 100vw;
+  height: calc(100vh - 60px);
+  top: 60px;
+}
+.App-loading > img {
+  animation: App-image-spin infinite 6s linear;
+  align-self: center;
+  max-height: 40vh;
+}
+
+/* App-header */
+
+.App-header {
+  display: flex;
+  flex-direction: row;
+  background-color: #346788;
+  justify-content: space-between;
+  height: 60px;
+  width: 100vw;
+  box-shadow: 0px 0px 7px 5px rgba(0,0,0,0.6)
+}
+.App-header > .App-tabs {
+  width: 80vw;
+}
+.App-header > .App-User {
+  width: 20vw;
+}
+
+.App-logo {
+/*  animation: App-image-spin infinite 20s linear; */
+  height: 40px;
+  width: 40px;
+  padding: 10px;
+}
+
+.SubApp-logo {
+  height: 40px;
+  width: 40px;
+  padding: 10px;
+  border-radius: 20px;
+}
+
+.Patreon-top-button {
+  cursor: pointer;
+  border-radius: 16px;
+  height: 40px;
+  padding: 10px;
+}
+
+.App-User {
+  display: flex;
+  justify-content: flex-end;
+}
+.App-User > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.App-User > div > p {
+  margin: 0px;
+  padding: 5px;
+  cursor: default;
+}
+.App-User > img {
+  padding: 5px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50px;
+}
+.App-User > a > img {
+  padding: 15px;
+  width: 30px;
+  height: 30px;
+}
+
+/* App-body */
+
+.App-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-self: center;
+  text-align: center;
+}
+
+.App-button {
+  text-align: center;
+  align-self: center;
+  background-color: #346788;
+  border-radius: 7px;
+  user-select: none;
+  color: white;
+  font-size: inherit;
+  border-width: 0px;
+  box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.3);
+  padding: 0px;
+}
+.App-button:hover {
+  cursor: pointer;
+  box-shadow: inset 0px 0px 7px 3px rgba(0,0,0,0.7)
+}
+.App-button:active {
+  background-color: #24485f;
+}
+.App-button > p {
+  margin: 0px;
+  padding: 15px 40px 15px 40px;
+}
+
+@keyframes App-image-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

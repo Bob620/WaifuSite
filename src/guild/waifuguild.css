@@ -1,0 +1,63 @@
+.Guild-Bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: #346788;
+  box-shadow: 0px 5px 5px #29526c inset;
+  margin-bottom: 10px;
+  width: 100vw;
+  height: 100px;
+}
+.Guild-Bar > div {
+  display: flex;
+  width: 200px
+}
+
+.Guild-Settings-Button > a > img {
+  height: 60px;
+  width: 60px;
+  padding: 20px;
+  border-radius: 80px;
+  transform: rotate(0deg);
+  transition: transform 0.5s;
+}
+.Guild-Settings-Button > a > img:hover {
+  transition: transform 0.5s;
+  transform: rotate(90deg);
+}
+
+.Guild-Title {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: auto !important;
+}
+.Guild-Title > h1 {
+  cursor: default;
+  margin: 0px;
+}
+
+.Return-Button {
+  padding: 13px;
+}
+.Return-Button > a > img {
+  cursor: pointer;
+  height: 60px;
+  width: 60px;
+  padding: 7px;
+  border-radius: 30px;
+}
+.Return-Button > a > img:hover {
+  background-color: #29526c;
+}
+
+.Discord-Guild-Image {
+  padding: 10px;
+  height: 80px;
+  width: 80px;
+}
+
+.Discord-Guild-Image > a > img {
+  height: 80px;
+  border-radius: 80px;
+}

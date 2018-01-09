@@ -1,0 +1,47 @@
+.Discord-guilds-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: center;
+  width: 51vw;
+}
+
+.Discord-guild {
+  width: auto;
+  padding: 7px;
+}
+.Discord-guild > a > img {
+  width: 80px;
+  cursor: pointer;
+  border-radius: 100px;
+}
+
+.Discord-guild > a > img:hover {
+  width: 100px;
+  transition: width 0.1s;
+}
+
+.Discord-guild > a > img {
+  width: 80px;
+  transition: width 0.1s;
+}
+
+.Discord-Guild-Add {
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+}
+.Discord-Guild-Add > a {
+  text-decoration: none;
+}
+.Discord-Guild-Add > a > p {
+  margin: 0px;
+  padding: 10px;
+  background-color: #346788;
+  border-radius: 10px;
+  cursor: pointer;
+  color: white;
+}
+.Discord-Guild-Add > a > p:hover {
+  background-color: #29526c;
+}
