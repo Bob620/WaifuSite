@@ -1,5 +1,5 @@
 # Basis
-Multi-page app with api that is the landing page for http://bobco.moe as well as hosts basic waifu settings at http://bobco.moe/waifu 
+Multi-page app with api that is the landing page for http://waifubot.moe
 
 # Usage
 ```bash
@@ -8,7 +8,7 @@ npm run build
 npm start
 ```
 
-Open webbrowser to localhost:80
+Open webbrowser to localhost:9080
 
 # Build Process
 The build.js script was made by me to bundle several js packages for multi-page apps, primary use in the Bobco website.
