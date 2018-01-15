@@ -82,179 +82,10 @@ router.get('/collector', (req, res, next) => {
   res.render('index', { bundle: 'collector.js' });
 });
 
-/* API calls */
 
-/* User API */
-router.get('/api/users/:userId', (req, res, next) => {
-  const sessionId = req.cookies.sessionId;
-  if (sessionId && sessionTokens[sessionId]) {
-    if (req.params.userId === '@me') {
-      res.status(202);
-      getUser(sessionTokens[sessionId])
-      .then((user) => {
-        res.status(200).json(user);
-      })
-      .catch((err) => {
-        res.status(403).json(err);
-      });
-    } else {
-      // Implement Further User Calls
-      res.status(403).end();
-    }
-  } else {
-    res.status(403).end();
-  }
-});
 
-// Limited to only personal guilds for security
-router.get('/api/users/@me/guilds', (req, res, next) => {
-  const sessionId = req.cookies.sessionId;
-  if (sessionId && sessionTokens[sessionId]) {
-    res.status(202);
 
-//    getBotGuilds()
-//    .then((botGuilds) => {
-      getGuilds(sessionTokens[sessionId])
-      .then((userGuilds) => {
-        let guilds = [];
-        userGuilds.forEach((guild) => {
-//          if (botGuilds.includes(guild.id)) {
-            guilds.push(guild);
-//          }
-        });
 
-        res.status(200).json(guilds);
-      })
-      .catch((err) => {
-        res.status(403).json(err);
-      });
-//    })
-//    .catch((err) => {
-//      res.status(403).json(err);
-//    });
-  } else {
-    res.status(403).end();
-  }
-});
-
-/* Guild API */
-router.get('/api/guilds/:guildId', (req, res, next) => {
-  const sessionId = req.cookies.sessionId;
-  const guildId = req.params.guildId.toString();
-
-  if (sessionId && sessionTokens[sessionId] && guildId && guildId !== 'undefined') {
-    res.status(202);
-
-    getGuilds(sessionTokens[sessionId])
-    .then((userGuilds) => {
-      let userGuild = userGuilds.filter((guild) => {
-        return guild.id === guildId
-      });
-      userGuild = userGuild[0];
-
-      if (userGuild) {
-        dynamodbWestTwo.getItem({TableName:"bobbot", Key: {id: {S: guildId}, type: {S: 'discord'}}}, (err, data) => {
-          if (err) {
-            console.log(err);
-            res.status(404).json({message: "An Error Occured"});
-          } else {
-            const guild = new WaifuGuild(userGuild, data.Item);
-
-            res.status(200).json(guild);
-          }
-        });
-      } else {
-        res.status(403).end();
-      }
-    })
-    .catch((err) => {
-      res.status(403).json({message: "An Error Occured"});
-    });
-  } else {
-    res.status(403).end();
-  }
-});
-
-router.post('/api/guilds/:guildId', (req, res, next) => {
-  const sessionId = req.cookies.sessionId;
-  const guildId = req.params.guildId.toString();
-  if (sessionId && sessionTokens[sessionId]) {
-    res.status(202);
-
-    getGuilds(sessionTokens[sessionId])
-    .then((userGuilds) => {
-      let userGuild = userGuilds.filter((guild) => {
-        return guild.id === guildId
-      });
-      userGuild = userGuild[0];
-
-      if (userGuild) {
-        dynamodbWestTwo.getItem({TableName:"bobbot", Key: {id: {S: guildId}, type: {S: 'discord'}}}, (err, data) => {
-          if (err) {
-            res.status(404).json({message: "An Error Occured"});
-          } else {
-            let guild = new WaifuGuild(userGuild, data.Item);
-
-            let entries = Object.entries(req.body);
-            if (guild.permissions.general) {
-              entries.forEach(([key, value]) => {
-                switch (key) {
-                  case "welcome":
-                    if (typeof value.active === 'boolean') {
-                      guild.welcome.active = value.active;
-                    }
-                    if (value.message && value.message.length > 1 && value.message.length < 400) {
-                      guild.welcome.message = value.message;
-                    }
-                    break;
-                }
-              });
-            }
-
-            dynamodbWestTwo.putItem({TableName:"bobbot", Item: guild.attributify()}, (err, data) => {
-              if (err) {
-                res.status(500).json({message: "An Error Occured"});
-              } else {
-                res.status(200).json(guild);
-              }
-            });
-          }
-        });
-      } else {
-        res.status(403).end();
-      }
-    })
-    .catch((err) => {
-      res.status(403).json(err);
-    });
-  } else {
-    res.status(403).end();
-  }
-});
-
-/* Authenitcation API */
-router.get('/api/auth', (req, res, next) => {
-  // Authenticate
-  authenticate(req.query.code)
-  .then((info) => {
-    sessionId = intformat(flakeId.next(), 'dec');
-
-    sessionTokens[sessionId] = info.token;
-
-    res.cookie('sessionId', sessionId, {
-      httpOnly: true,
-      path: '/',
-      expires: new Date(Date.now()+info.expires_in),
-      maxAge: info.expires_in
-    });
-
-    res.redirect(303, '/');
-  })
-  .catch((err) => {
-    console.log(err);
-    res.redirect('/error/401');
-  });
-});
 
 /* Background Functions */
 
@@ -267,7 +98,7 @@ function authenticate(code) {
     let info = {};
 
     const test = https.request({
-      path: '/api/oauth2/token?client_id=259932651417370624&client_secret=-V_Rkf4Gg44QraRjjMdbss465gL42vOH&grant_type=authorization_code&redirect_uri=http://localhost/api/auth&code='+code,
+      path: `/api/oauth2/token?client_id=259932651417370624&client_secret=${kagi.getChain('waifusecret.chn').getLink('website').password}&grant_type=authorization_code&redirect_uri=http://localhost/api/auth&code=${code}`,
       hostname: 'discordapp.com', method: 'POST', port: '443', headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         'User-Agent': 'DiscordBot (https://github.com/Bob620/waifusite, 2.1.0)'

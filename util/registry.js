@@ -1,9 +1,15 @@
+const crypto = require('crypto');
+
 const Collection = require('./collection.js'),
-      requests = require('./discordrequests.js')('http://localhost');
+      Requests = require('./discordrequests.js');
+
+const requests = new Requests('http://localhost');
 
 /** Session {
- *    token: (string|undefined)
- *    expires: (number|undefined)
+ *    sessionId: string,
+ *    token: (string|undefined),
+ *    expires: (number|undefined),
+ *    refreshed: (number|undefined)
  * }
  */
 
@@ -38,23 +44,11 @@ class Registry {
     return false;
   }
 
-  refreshSession(sessionId) {
-    this.refreshToken(sessionId);
-  }
-
-  createSession() {
+  async createSession(code) {
     const sessionId = generateUuid();
-    this.activeSessions.set(sessionid, new Session(sessionId))
-    return session;
-  }
-
-  removeSession(sessionId) {
-    this.revokeToken(sessionId);
-    this.activeSessions.delete(sessionId);
-  }
-
-  async requestToken(sessionId, code) {
     try {
+      this.activeSessions.set(sessionId, {sessionId});
+      
       const session = this.activeSessions.get(sessionId);
       const {token, expires, refreshed, refreshToken} = await requests.requestToken(code);
 
@@ -62,12 +56,21 @@ class Registry {
       session.expires = expires;
       session.refreshed = refreshed;
       this.refreshTokens.set(refreshToken);
-      return true;
+      return {sessionId, expires};
     } catch(err) {
       console.log(err);
       this.removeSession(sessionId);
-      return false;
+      throw err;
     }
+  }
+
+  refreshSession(sessionId) {
+    this.refreshToken(sessionId);
+  }
+
+  removeSession(sessionId) {
+    this.revokeToken(sessionId);
+    this.activeSessions.delete(sessionId);
   }
 
   async refreshToken(sessionId) {
@@ -106,4 +109,4 @@ class Registry {
   }
 }
 
-module.exports = Registry();
+module.exports = new Registry();

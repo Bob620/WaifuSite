@@ -1,3 +1,5 @@
+const https = require('https');
+
 const kagi = require('kagi');
 
 class DiscordRequests {
@@ -17,7 +19,7 @@ class DiscordRequests {
 
   requestToken(code) {
     return new Promise((resolve, reject) => {
-      const waifusitekagi = kagi.getChain('waifusecret.chn').getLink('website');
+      const waifusitekagi = kagi.getChain('waifusecret.chn').getLink('website').data;
       const authRequest = https.request(
         this.requestOptions(`/api/oauth2/token?client_id=${waifusitekagi.username}&client_secret=${waifusitekagi.password}&grant_type=authorization_code&${this.returnUrl !== '' ? `redirect_uri=${this.returnUrl}/api/auth` : ''}&code=${code}`),
       (res) => {
@@ -50,7 +52,7 @@ class DiscordRequests {
 
   refreshToken(token) {
     return new Promise((resolve, reject) => {
-      const waifusitekagi = kagi.getChain('waifusecret.chn').getLink('website');
+      const waifusitekagi = kagi.getChain('waifusecret.chn').getLink('website').data;
       const authRequest = https.request(
         this.requestOptions(`/api/oauth2/token?client_id=${waifusitekagi.username}&client_secret=${waifusitekagi.password}&grant_type=refresh_token&${this.returnUrl !== ''? `redirect_uri=${this.returnUrl}/api/auth` : ''}&refresh_token=${token}`),
       (res) => {
@@ -84,7 +86,7 @@ class DiscordRequests {
   revokeToken(token) {
     return new Promise((resolve, reject) => {
       const authRequest = https.request(
-        this.requestOptions(`/api/oauth2/token/revoke?client_id=${kagi.getChain('waifusecret.chn').getLink('website').username}&token=${session.token}`, 'GET'),
+        this.requestOptions(`/api/oauth2/token/revoke?client_id=${kagi.getChain('waifusecret.chn').getLink('website').data.username}&token=${session.token}`, 'GET'),
       (res) => {
         res.setEncoding('utf8');
   
