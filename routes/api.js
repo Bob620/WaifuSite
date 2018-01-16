@@ -1,23 +1,16 @@
-const http = require('http');
-
 const express = require('express'),
       kagi = require('kagi'),
       registry = require('../util/registry.js');
 
-// Waifu Storage
-const aws = require('aws-sdk');
-aws.config.update(kagi.getChain('kagi.chn').getLink('credentials'));
-const dynamodbWestTwo = new aws.DynamoDB({apiVersion: '2012-08-10', 'region': 'us-west-2'});
-
 // This Web Server
 const router = express.Router();
-const sessionTokens = {};
 
 /* API calls */
 
 /* User API */
 router.get('/users/:userId', (req, res, next) => {
   const sessionId = req.cookies.sessionId;
+
   if (registry.isActiveSession(sessionId)) {
     res.status(202);
     switch(req.params.userId) {
@@ -40,6 +33,7 @@ router.get('/users/:userId', (req, res, next) => {
 // Limited to only personal guilds for security
 router.get('/users/@me/guilds', (req, res, next) => {
   const sessionId = req.cookies.sessionId;
+
   if (registry.isActiveSession(sessionId)) {
     res.status(202);
     // archived getBotGuilds -> archived getGuilds -> Cross refrence and send the guilds waifu is in to the user
@@ -94,6 +88,20 @@ router.get('/auth', async (req, res, next) => {
   } catch(err) {
     console.log(err);
     res.redirect('/error/401');
+  }
+});
+
+/* logout page. */
+router.get('/logout', (req, res, next) => {
+  const sessionId = req.cookies.sessionId;
+
+  if (registry.isActiveSession(sessionId)) {
+    registry.removeSession(sessionId);
+    res.clearCookie(sessionId);
+    res.redirect('/');
+  } else {
+    res.clearCookie(sessionId);
+    res.redirect('/');
   }
 });
 

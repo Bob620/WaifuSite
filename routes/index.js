@@ -59,22 +59,7 @@ router.get('/guilds/:guildId/settings', (req, res, next) => {
 
 /* GET logout page. */
 router.get('/logout', (req, res, next) => {
-  const sessionId = req.cookies.sessionId;
-  if (sessionId && sessionTokens[sessionId]) {
-    revokeToken(sessionTokens[sessionId])
-    .then(() => {
-      delete sessionTokens[sessionId];
-      res.clearCookie(sessionId);
-      res.redirect('/');
-    })
-    .catch(() => {
-      delete sessionTokens[sessionId];
-      res.clearCookie(sessionId);
-      res.redirect('/');
-    })
-  } else {
-    res.redirect('/');
-  }
+  res.redirect('/api/logout');
 });
 
 /* GET collector landing page. */
@@ -88,45 +73,6 @@ router.get('/collector', (req, res, next) => {
 
 
 /* Background Functions */
-
-/**
- * Authenticate a user
- * @returns {Promise} The OAuth2 Token and Expiration
- */
-function authenticate(code) {
-  return new Promise((resolve, reject) => {
-    let info = {};
-
-    const test = https.request({
-      path: `/api/oauth2/token?client_id=259932651417370624&client_secret=${kagi.getChain('waifusecret.chn').getLink('website').password}&grant_type=authorization_code&redirect_uri=http://localhost/api/auth&code=${code}`,
-      hostname: 'discordapp.com', method: 'POST', port: '443', headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'User-Agent': 'DiscordBot (https://github.com/Bob620/waifusite, 2.1.0)'
-      }
-    }, (res) => {
-      res.setEncoding('utf8');
-
-      res.on('data', (data) => {
-        const jsondata = JSON.parse(data);
-        if (jsondata.access_token === undefined || jsondata.expires_in === undefined) {
-          info.err = {code: 0, message: "unable to authenticate"}
-        } else {
-          info.token = jsondata.access_token;
-          info.expires_in = jsondata.expires_in;
-        }
-      });
-
-      res.on('end', () => {
-        if (info.err) {
-          reject(info.err);
-        } else {
-          resolve(info);
-        }
-      });
-    });
-    test.end();
-  });
-}
 
 /**
  * Retrives waifubot's guilds
