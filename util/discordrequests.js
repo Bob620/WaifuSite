@@ -7,6 +7,17 @@ class DiscordRequests {
     this.returnUrl = returnUrl;
   }
 
+  requestAuthedOptions(path, token, method='GET') {
+    return {
+      path,
+      hostname: 'discordapp.com', method, port: '443', headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'User-Agent': 'WaifuBot (https://github.com/Bob620/waifusite, 1.0.0)'
+      }
+    }
+  }
+
   requestOptions(path, method='POST') {
     return {
       path,
@@ -99,6 +110,33 @@ class DiscordRequests {
         });
       });
 
+      authRequest.end();
+    });
+  }
+
+  requestUserGuilds(token) {
+    return new Promise((resolve, reject) => {
+  
+      const authRequest = https.request(
+        this.requestAuthedOptions('/api/users/@me/guilds', token),
+      (res) => {
+        res.setEncoding('utf8');
+        let guilds = '';
+  
+        res.on('data', (data) => {
+          guilds += data;
+        });
+  
+        res.on('end', () => {
+          const guildsjson = JSON.parse(guilds);
+          if (guildsjson.code) {
+            reject(guildsjson);
+          } else {
+            resolve(guildsjson);
+          }
+        })
+      });
+  
       authRequest.end();
     });
   }
