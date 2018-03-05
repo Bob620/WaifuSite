@@ -3,14 +3,14 @@
  */
 
 const fs = require('fs');
-const path = require('path');
 const envify = require('envify/custom');
 const uglifyjs = require('uglify-js');
+const scssify = require('scssify');
 const browserify = require('browserify');
 
 const generalFileRegex = /(\.)(.)+/gi;
 const baseDir = "./src";
-const outputDir = "./public";
+const outputDir = "./public/react";
 const entryFile = "index.jsx";
 
 process.env.NODE_ENV = 'production';
@@ -19,6 +19,10 @@ process.env.NODE_ENV = 'production';
  * Builds the src directory
  */
 function build() {
+	if (!fs.existsSync(outputDir)){
+		fs.mkdirSync(outputDir);
+	}
+
   let directories = [];
 
   // Searches through the src directory and adds all subfolders to an array
@@ -56,6 +60,7 @@ function build() {
  */
 function bundle(files, outputName) {
   browserify()
+  .transform(scssify)
   .transform(envify({NODE_ENV: 'production'}))
   .transform('uglifyify', {global: true})
   .add(files)

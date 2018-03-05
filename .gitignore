@@ -58,4 +58,4 @@ typings/
 .env
 
 # remove built files
-public/*.js
+public/react/

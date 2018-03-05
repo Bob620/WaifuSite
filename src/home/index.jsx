@@ -2,7 +2,7 @@ import Render from './../render.jsx';
 import React, { Component } from 'react';
 import { Header } from './../general.jsx';
 import axios from 'axios';
-import './waifuhome.css';
+import './home.scss';
 
 class BaseElement extends Component {
   constructor(props) {
@@ -20,13 +20,13 @@ class BaseElement extends Component {
       console.log(err);
     });
 
-    axios.get('/api/users/@me/guilds')
-    .then((res) => {
-      this.setState({guilds: res.data});
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+//    axios.get('/api/users/@me/guilds')
+//    .then((res) => {
+//      this.setState({guilds: res.data});
+//    })
+//    .catch((err) => {
+//      console.log(err);
+//    });
   }
 
 	render() {
@@ -34,12 +34,8 @@ class BaseElement extends Component {
     if (this.state.user !== undefined) {
       return (
   			<div className="App">
-    			 <Header title="Waifu Bot" user={this.state.user} />
-           {this.state.guilds ? (
-    		      <Dashboard user={this.state.user} guilds={this.state.guilds} />
-           ) : (
-             <div className="App-body"></div>
-           )}
+				  <Header title="Waifu Bot" user={this.state.user} />
+				  <Dashboard user={this.state.user} />
   			</div>
   		);
     } else {
@@ -53,6 +49,24 @@ class BaseElement extends Component {
 	}
 }
 
+class Dashboard extends Component {
+	constructor(props) {
+		super(props);
+	}
+
+	render() {
+		return (
+			<div className="App-body">
+				<p>
+					{"Welcome "+this.props.user.username}
+				</p>
+				<h2>This is a placeholder, I will fix this!</h2>
+			</div>
+		);
+	}
+}
+
+/*
 class Dashboard extends Component {
   constructor(props) {
     super(props);
@@ -78,7 +92,8 @@ class Dashboard extends Component {
     );
   }
 }
-
+*/
+/*
 class GuildImage extends Component {
   constructor(props) {
     super(props);
@@ -98,5 +113,5 @@ class GuildImage extends Component {
     );
   }
 }
-
+*/
 Render(BaseElement);

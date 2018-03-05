@@ -1,108 +1,107 @@
 const express = require('express'),
-      kagi = require('kagi'),
-      registry = require('../util/registry.js');
+			Requests = require('../util/discordrequests.js');
 
-// This Web Server
-const router = express.Router();
+const requests = new Requests('https://localhost');
 
-/* API calls */
+class APIPages {
+	constructor(registry) {
+		this.registry = registry;
+		this.router = express.Router();
 
-/* User API */
-router.get('/users/:userId', (req, res, next) => {
-  const sessionId = req.cookies.sessionId;
+		/* User API */
+		this.router.get('/users/:userId', (req, res) => {
+			const sessionId = req.cookies.sessionId;
 
-  if (registry.isActiveSession(sessionId)) {
-    res.status(202);
-    switch(req.params.userId) {
-      case '@me':
-        // Send user info (archived getUser)
-        //res.status(200).json(user);
-        //res.status(403).json(err);
-        res.status(503).end();
-        break;
-      default:
-        // Implement Further User Calls
-        res.status(501).end();
-        break;
-    }
-  } else {
-    res.status(403).end();
-  }
-});
+			if (this.registry.isActiveSession(sessionId)) {
+				res.status(202);
+				switch(req.params.userId) {
+					case '@me':
+						// Send user info (archived getUser)
+						requests.requestUser(this.registry.activeSessions.get(sessionId)).then((user) => {
+							res.status(200).json(user);
+						}).catch(() => {
+							res.status(403).end();
+						});
+						//res.status(403).json(err);
+						break;
+					default:
+						// Implement Further User Calls
+						res.status(501).end();
+						break;
+				}
+			} else {
+				res.status(403).end();
+			}
+		});
 
-// Limited to only personal guilds for security
-router.get('/users/@me/guilds', (req, res, next) => {
-  const sessionId = req.cookies.sessionId;
+		// Limited to only personal guilds for security
+		this.router.get('/users/@me/guilds', (req, res) => {
+			const sessionId = req.cookies.sessionId;
 
-  if (registry.isActiveSession(sessionId)) {
-    res.status(202);
-    // archived getBotGuilds -> archived getGuilds -> Cross refrence and send the guilds waifu is in to the user
-    res.status(503).end();
-  } else {
-    res.status(403).end();
-  }
-});
+			if (this.registry.isActiveSession(sessionId)) {
+				res.status(202);
+				// archived getBotGuilds -> archived getGuilds -> Cross reference and send the guilds waifu is in to the user
+				requests.requestUserGuilds(this.registry.activeSessions.get(sessionId)).then((guilds) => {
+					res.status(200).json(guilds);
+				}).catch(() => {
+					res.status(403).end();
+				});
+			} else {
+				res.status(403).end();
+			}
+		});
 
-/* Guild API */
-router.get('/guilds/:guildId', (req, res, next) => {
-  const sessionId = req.cookies.sessionId;
-  const guildId = req.params.guildId.toString();
 
-  if (registry.isActiveSession(sessionId) && guildId !== undefined) {
-    res.status(202);
-    // archived getGuilds -> dynamo call to get the guild -> return guild info
-    res.status(503).end();
-  } else {
-    res.status(403).end();
-  }
-});
+		/* Guild API */
+		this.router.get('/guilds/:guildId', (req, res) => {
+			const sessionId = req.cookies.sessionId;
+			const guildId = req.params.guildId.toString();
 
-router.post('/guilds/:guildId', (req, res, next) => {
-  const sessionId = req.cookies.sessionId;
-  const guildId = req.params.guildId.toString();
+			if (this.registry.isActiveSession(sessionId) && guildId !== undefined) {
+				res.status(202);
+				// archived getGuilds -> dynamo call to get the guild -> return guild info
+				res.status(503).end();
+			} else {
+				res.status(403).end();
+			}
+		});
 
-  if (registry.isActiveSession(sessionId)) {
-    res.status(202);
-    // archived getGuilds -> dynamo call to get guild -> check perms -> update guild -> dynamo call to update guild
-    res.status(503).end();
-  } else {
-    res.status(403).end();
-  }
-});
 
-/* Authenitcation API */
-router.get('/auth', async (req, res, next) => {
-  res.status(202);
-  try {
-    // Authenticate
-    const {sessionId, expires} = await registry.createSession(req.query.code);
+		/* Authentication API */
+		this.router.get('/auth', async (req, res) => {
+			res.status(202);
+			try {
+				// Authenticate
+				const {sessionId, expires} = await this.registry.createSession(req.query.code);
 
-    res.cookie('sessionId', sessionId, {
-      httpOnly: true,
-      path: '/',
-      expires: expires,
-      maxAge: expires
-    });
+				res.cookie('sessionId', sessionId, {
+					httpOnly: true,
+					path: '/',
+					expires: expires,
+					maxAge: expires
+				});
 
-    res.redirect(303, '/');
-  } catch(err) {
-    console.log(err);
-    res.redirect('/error/401');
-  }
-});
+				res.redirect(303, '/home');
+			} catch(err) {
+				console.log(err);
+				res.redirect('/error/401');
+			}
+		});
 
-/* logout page. */
-router.get('/logout', (req, res, next) => {
-  const sessionId = req.cookies.sessionId;
+		/* logout page. */
+		this.router.get('/logout', (req, res) => {
+			const sessionId = req.cookies.sessionId;
 
-  if (registry.isActiveSession(sessionId)) {
-    registry.removeSession(sessionId);
-    res.clearCookie(sessionId);
-    res.redirect('/');
-  } else {
-    res.clearCookie(sessionId);
-    res.redirect('/');
-  }
-});
+			if (this.registry.isActiveSession(sessionId)) {
+				this.registry.removeSession(sessionId);
+				res.clearCookie(sessionId);
+				res.redirect('/');
+			} else {
+				res.clearCookie(sessionId);
+				res.redirect('/');
+			}
+		});
+	}
+}
 
-module.exports = router;
+module.exports = APIPages;

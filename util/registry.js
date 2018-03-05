@@ -23,25 +23,31 @@ class Registry {
     this.activeSessions = new Collection();
 
     setInterval(() => {
-      this.activeSessions.forEach((session, sessionId) => {
-        const offest = Math.floor(Date.now()/1000) - session.refreshed;
-        if (offset < 300000) {
-          session.expires -= offset;
-        } else {
-          session.expires -= 300000;
-        }
-        if (session.expires <= 0) {
-          this.activeSessions.delete(sessionId);
-        }
-      });
+    	this.activeSessions.forEach((session, sessionId) => {
+		    if (session.expires <= Math.floor(Date.now() / 1000)) {
+			    this.activeSessions.delete(sessionId);
+		    }
+    	});
     }, 300000);
   }
 
   isActiveSession(sessionId) {
-    if (sessionId !== undefined && this.activeSessions.has(sessionId)) {
-      return true;
-    }
-    return false;
+  	try {
+		  const session = this.activeSessions.get(sessionId);
+			if (session.expires <= Math.floor(Date.now() / 1000)+10000) {
+				this.refreshSession(sessionId);
+				return true;
+			} else {
+				if (session.expires <= Math.floor(Date.now() / 1000)) {
+					this.activeSessions.delete(sessionId);
+				} else {
+					return true;
+				}
+			}
+			return false;
+	  } catch (err) {
+  		return false;
+	  }
   }
 
   async createSession(code) {
@@ -55,7 +61,7 @@ class Registry {
       session.token = token;
       session.expires = expires;
       session.refreshed = refreshed;
-      this.refreshTokens.set(refreshToken);
+      this.refreshTokens.set(sessionId, refreshToken);
       return {sessionId, expires};
     } catch(err) {
       console.log(err);
@@ -65,7 +71,7 @@ class Registry {
   }
 
   refreshSession(sessionId) {
-    this.refreshToken(sessionId);
+    return this.refreshToken(sessionId);
   }
 
   removeSession(sessionId) {
@@ -81,7 +87,7 @@ class Registry {
       session.token = token;
       session.expires = expires;
       session.refreshed = refreshed;
-      this.refreshTokens.set(refreshToken);
+      this.refreshTokens.set(sessionId, refreshToken);
       return true;
     } catch(err) {
       console.log(err);

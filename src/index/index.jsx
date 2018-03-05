@@ -2,17 +2,30 @@ import Render from './../render.jsx';
 import React, { Component } from 'react';
 import { Header, Loading, RedirectButton } from './../general.jsx';
 import './waifu.css';
+import axios from "axios/index";
 
 class Waifu extends Component {
   constructor() {
-	   super();
+  	super();
+
+	  this.state = {};
   }
+
+	componentDidMount() {
+		axios.get('/api/users/@me')
+		.then((res) => {
+			this.setState({user: res.data});
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+	}
 
 	render() {
 		document.title = "Waifu Bot";
 		return (
 			<div className="App">
-			  <Header title=""/>
+			  <Header title="" user={this.state.user}/>
 		    <GeneralHome />
 			</div>
 		);
@@ -31,9 +44,9 @@ class GeneralHome extends Component {
             <p className="App-intro">
               An easy to use Chatbot based around anime pictures
             </p>
-            <RedirectButton text="Add Waifu to a Server" link="https://discordapp.com/oauth2/authorize?&client_id=259932651417370624&scope=bot&permissions=66321471" />
+            <RedirectButton text="Add Waifu to a Server" link="/addwaifu" />
             <br/>
-            <RedirectButton text="Login to Console" link="https://discordapp.com/oauth2/authorize?response_type=code&redirect_uri=http%3A%2F%2Flocalhost/api/auth&scope=identify guilds&client_id=259932651417370624" />
+            <RedirectButton text="Login to Console" link="/login" />
           </div>
         </section>
         <section id="right-part">
