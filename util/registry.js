@@ -3,7 +3,7 @@ const crypto = require('crypto');
 const Collection = require('./collection.js'),
       Requests = require('./discordrequests.js');
 
-const requests = new Requests('http://localhost');
+const requests = new Requests('https://waifubot.moe');
 
 /** Session {
  *    sessionId: string,
