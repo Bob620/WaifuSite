@@ -1,7 +1,7 @@
 const express = require('express'),
 			Requests = require('../util/discordrequests.js');
 
-const requests = new Requests('https://localhost');
+const requests = new Requests('https://waifubot.moe');
 
 class APIPages {
 	constructor(registry) {

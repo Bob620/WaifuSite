@@ -47,7 +47,7 @@ class StandardPages {
 			if (this.registry.isActiveSession(req.cookies.sessionId)) {
 				res.redirect('/home');
 			} else {
-				res.redirect('https://discordapp.com/oauth2/authorize?response_type=code&redirect_uri=http%3A%2F%2Flocalhost/api/auth&scope=identify guilds&client_id=259932651417370624');
+				res.redirect('https://discordapp.com/oauth2/authorize?response_type=code&redirect_uri=http%3A%2F%2Fwaifubot.moe/api/auth&scope=identify guilds&client_id=259932651417370624');
 			}
 		});
 
