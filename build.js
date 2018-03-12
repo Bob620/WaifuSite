@@ -10,7 +10,7 @@ const browserify = require('browserify');
 
 const generalFileRegex = /(\.)(.)+/gi;
 const baseDir = "./src";
-const outputDir = "./public";
+const outputDir = "./public/react";
 const entryFile = "index.jsx";
 
 /**
@@ -54,7 +54,7 @@ function bundle(files, outputName) {
   // Use babelify and browserify-css to compile react and css
   browserify()
     // Uses babelify's react and es6 presets
-    .transform(babelify, {presets: ["es2015", "react"]})
+    .transform(babelify, {presets: ["env", "react"]})
     // Allows bundling of css
     .transform(cssify)
     // Adds files, Don't use .require() unless you want it to import it as a module
