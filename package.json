@@ -4,8 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "build": "node build.js",
-    "buildprod": "node prodbuild.js"
+    "build": "node prodbuild.js"
   },
   "browserify": {
     "transform": [
@@ -24,15 +23,12 @@
     ]
   },
   "dependencies": {
-    "aws-sdk": "^2.58.0",
     "axios": "^0.16.2",
     "babel-cli": "^6.22.2",
     "babel-core": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.22.0",
     "babelify": "^7.3.0",
-    "bakajax": "0.0.3",
-    "biguint-format": "^1.0.0",
     "body-parser": "~1.15.2",
     "browserify": "^14.0.0",
     "browserify-css": "^0.10.0",
@@ -40,7 +36,6 @@
     "debug": "~2.2.0",
     "envify": "^4.1.0",
     "express": "~4.14.0",
-    "flake-idgen": "^1.1.0",
     "kagi": "github:toka-io/kagi",
     "morgan": "~1.7.0",
     "pug": "~2.0.0-beta6",

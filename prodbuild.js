@@ -27,8 +27,8 @@ function build() {
 
   // Searches through the src directory and adds all subfolders to an array
   const files = fs.readdirSync(baseDir);
-  for (x = 0; x < files.length; x++) {
-    const file = files[x];
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
     // finds the subfolders (In this case anything that matches the regex /(\.)(.)+/gi)
     if (file.match(generalFileRegex) === null) {
       const dirFiles = fs.readdirSync(`${baseDir}/${file}`);
@@ -52,7 +52,7 @@ function build() {
 }
 
 /**
- * Bundles files togeather into outputName.js
+ * Bundles files together into outputName.js
  * @param {Array} files array of the file urls
  * @param {string} outputName name of the output file (.js added automatically)
  * @example
