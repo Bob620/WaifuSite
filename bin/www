@@ -28,29 +28,36 @@ process.on('SIGTERM', exitHandler.bind(null, { exit: true }));
 // catches uncaught exceptions
 process.on('uncaughtException', exitHandler.bind(null, { exit: false }));
 
+let port = undefined;
+for (let i = 0; i < process.argv.length; i++) {
+	switch (process.argv[i]) {
+		case '--port':
+		case '-p':
+			port = process.argv[++i];
+			break;
+	}
+}
+
 /**
  * Module dependencies.
  */
 
-var app = require('../app');
-var debug = require('debug')('bobco:server');
-var http = require('http');
+const app = require('../app');
+const debug = require('debug')('bobco:server');
+const http = require('http');
 
 /**
  * Get port from environment and store in Express.
  */
 
-let port = '80';
-if (process.env.NODE_ENV === 'production') {
-  port = normalizePort(process.env.PORT || '9080');
-}
+port = normalizePort(port || '9080');
 app.set('port', port);
 
 /**
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
+let server = http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -65,7 +72,7 @@ server.on('listening', onListening);
  */
 
 function normalizePort(val) {
-  var port = parseInt(val, 10);
+  let port = parseInt(val, 10);
 
   if (isNaN(port)) {
     // named pipe
@@ -89,7 +96,7 @@ function onError(error) {
     throw error;
   }
 
-  var bind = typeof port === 'string'
+  let bind = typeof port === 'string'
     ? 'Pipe ' + port
     : 'Port ' + port;
 
@@ -113,8 +120,8 @@ function onError(error) {
  */
 
 function onListening() {
-  var addr = server.address();
-  var bind = typeof addr === 'string'
+  let addr = server.address();
+  let bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
