@@ -25,7 +25,7 @@ class Registry {
     setInterval(() => {
     	this.activeSessions.forEach((session, sessionId) => {
 		    if (session.expires <= Math.floor(Date.now() / 1000)) {
-			    this.activeSessions.delete(sessionId);
+			    this.removeSession(sessionId);
 		    }
     	});
     }, 300000);
@@ -39,7 +39,7 @@ class Registry {
 				return true;
 			} else {
 				if (session.expires <= Math.floor(Date.now() / 1000)) {
-					this.activeSessions.delete(sessionId);
+					this.removeSession(sessionId);
 				} else {
 					return true;
 				}
